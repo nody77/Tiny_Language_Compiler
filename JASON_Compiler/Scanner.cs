@@ -10,7 +10,7 @@ public enum Token_Class
     Parameters, Procedure, Program, Read, Real, Set, Then, Until, While, Write,
     Dot, Semicolon, Comma, LParanthesis, RParanthesis, EqualOp, LessThanOp,
     GreaterThanOp, NotEqualOp, PlusOp, MinusOp, MultiplyOp, DivideOp,
-    Idenifier, Constant
+    Idenifier, Constant , DataTypes
 }
 namespace TINY_COMPILER
 {
@@ -27,7 +27,7 @@ namespace TINY_COMPILER
         public List<Token> Tokens = new List<Token>();
         Dictionary<string, Token_Class> ReservedWords = new Dictionary<string, Token_Class>();
         Dictionary<string, Token_Class> Operators = new Dictionary<string, Token_Class>();
-
+        Dictionary<string, Token_Class> DataTypes = new Dictionary<string, Token_Class>();
         public Scanner()
         {
             ReservedWords.Add("IF", Token_Class.If);
@@ -66,7 +66,9 @@ namespace TINY_COMPILER
             Operators.Add("*", Token_Class.MultiplyOp);
             Operators.Add("/", Token_Class.DivideOp);
 
-
+            DataTypes.Add("int", Token_Class.DataTypes);
+            DataTypes.Add("float", Token_Class.DataTypes);
+            DataTypes.Add("string", Token_Class.DataTypes);
 
         }
 
