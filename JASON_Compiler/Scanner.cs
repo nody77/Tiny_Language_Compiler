@@ -81,15 +81,17 @@ namespace JASON_Compiler
             {
                 int j = i;
                 char CurrentChar = SourceCode[i];
-                string CurrentLexeme = CurrentChar.ToString();
+                //string CurrentLexeme = CurrentChar.ToString();
 
                 if (CurrentChar == ' ' || CurrentChar == '\r' || CurrentChar == '\n')
                     continue;
 
                 if (CurrentChar >= 'A' && CurrentChar <= 'z') //if you read a character
                 {
+                    // Identifier // Reserved Word  
                     j += 1;
-                    CurrentLexeme += CurrentChar;
+                    string CurrentLexeme = CurrentChar.ToString();
+                    CurrentChar = SourceCode[j];
                     while (CurrentChar >= 'A' && CurrentChar <='z' || CurrentChar >= '1' &&   CurrentChar <= '9')
                     {
                         CurrentLexeme += CurrentChar;
@@ -114,8 +116,8 @@ namespace JASON_Compiler
                    
                 }
             }
-            
-            JASON_Compiler.TokenStream = Tokens;
+
+            JASON_COMPILER.JASON_Compiler.TokenStream = Tokens;
         }
         void FindTokenClass(string Lex)
         {
@@ -128,50 +130,55 @@ namespace JASON_Compiler
                 Tok.token_type = ReservedWords[Lex];
                 Tokens.Add(Tok);
             }
-
-            //Is it an identifier?
-            if (isIdentifier(Lex))
-            {
-                Tok.token_type = Token_Class.Idenifier;
-                Tokens.Add(Tok);
-            }
-
-            if (isNumber(Lex))
-            {
-                Tok.token_type = Token_Class.Number;
-                Tokens.Add(Tok);
-            }
-
-            if (isString(Lex))
-            {
-                Tok.token_type = Token_Class.String;
-                Tokens.Add(Tok);
-            }
-            if (isComment(Lex))
-            {
-                Tok.token_type = Token_Class.Comment;
-                Tokens.Add(Tok);
-            }
-            if (isOperator(Lex))
-            {
-                Tok.token_type = Operators[Lex];
-                Tokens.Add(Tok);
-            }
-            if (isconditinalOperator(Lex))
-            {
-                Tok.token_type = Operators[Lex];
-                Tokens.Add(Tok);
-            }
-            if (isBooleanOperator(Lex))
-            {
-                Tok.token_type = Operators[Lex];
-                Tokens.Add(Tok);
-            }
-            if (isDataType(Lex))
+            //Is it Data Type?
+            else if (isDataType(Lex))
             {
                 Tok.token_type = DataTypes[Lex];
                 Tokens.Add(Tok);
             }
+            //Is it an identifier?
+            else if (isIdentifier(Lex))
+            {
+                Tok.token_type = Token_Class.Idenifier;
+                Tokens.Add(Tok);
+            }
+            //Is it a Number?
+            else if (isNumber(Lex))
+            {
+                Tok.token_type = Token_Class.Number;
+                Tokens.Add(Tok);
+            }
+            //Is it a string?
+            else if (isString(Lex))
+            {
+                Tok.token_type = Token_Class.String;
+                Tokens.Add(Tok);
+            }
+            //Is it a comment?
+            else if (isComment(Lex))
+            {
+                Tok.token_type = Token_Class.Comment;
+                Tokens.Add(Tok);
+            }
+            //Is it an operator?
+            else if (isOperator(Lex))
+            {
+                Tok.token_type = Operators[Lex];
+                Tokens.Add(Tok);
+            }
+            //Is it a Conditional Operator?
+            else if (isconditinalOperator(Lex))
+            {
+                Tok.token_type = Operators[Lex];
+                Tokens.Add(Tok);
+            }
+            //Is it a Boolean Operator?
+            else if (isBooleanOperator(Lex))
+            {
+                Tok.token_type = Operators[Lex];
+                Tokens.Add(Tok);
+            }
+          
 
         }
         bool isNumber(string lex) {

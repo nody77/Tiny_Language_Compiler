@@ -22,7 +22,7 @@ namespace JASON_Compiler
             textBox2.Clear();
             //string Code=textBox1.Text.ToLower();
             string Code = textBox1.Text;
-            JASON_Compiler.Start_Compiling(Code);
+            JASON_COMPILER.JASON_Compiler.Start_Compiling(Code);
             PrintTokens();
          //   PrintLexemes();
 
@@ -30,9 +30,9 @@ namespace JASON_Compiler
         }
         void PrintTokens()
         {
-            for (int i = 0; i < JASON_Compiler.Jason_Scanner.Tokens.Count; i++)
+            for (int i = 0; i < JASON_COMPILER.JASON_Compiler.Jason_Scanner.Tokens.Count; i++)
             {
-               dataGridView1.Rows.Add(JASON_Compiler.Jason_Scanner.Tokens.ElementAt(i).lex, JASON_Compiler.Jason_Scanner.Tokens.ElementAt(i).token_type);
+               dataGridView1.Rows.Add(JASON_COMPILER.JASON_Compiler.Jason_Scanner.Tokens.ElementAt(i).lex, JASON_COMPILER.JASON_Compiler.Jason_Scanner.Tokens.ElementAt(i).token_type);
             }
         }
 
@@ -57,7 +57,7 @@ namespace JASON_Compiler
         private void button2_Click(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
-            JASON_Compiler.TokenStream.Clear();
+            JASON_COMPILER.JASON_Compiler.TokenStream.Clear();
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)

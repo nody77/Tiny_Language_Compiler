@@ -1,12 +1,13 @@
-﻿using System;
+﻿using JASON_Compiler;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TINY_COMPILER
+namespace JASON_COMPILER
 {
-    public static class Tiny_Compiler
+    public static class JASON_Compiler
     {
         public static Scanner Jason_Scanner = new Scanner();
        

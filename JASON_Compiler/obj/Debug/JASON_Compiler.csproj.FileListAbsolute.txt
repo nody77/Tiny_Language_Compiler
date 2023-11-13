@@ -53,3 +53,14 @@ G:\college\2021-2022\First Term\Compilers\Compliers\This Year\Labs\Lab 3\[2020-2
 G:\college\2021-2022\First Term\Compilers\Compliers\This Year\Labs\Lab 3\[2020-2021] JASON_Compiler_Template\[2020-2021] JASON_Compiler_Template\[2017-2018] JASON_Compiler_Template\JASON_Compiler\obj\Debug\JASON_Compiler.csproj.CoreCompileInputs.cache
 G:\college\2021-2022\First Term\Compilers\Compliers\This Year\Labs\Lab 3\[2020-2021] JASON_Compiler_Template\[2020-2021] JASON_Compiler_Template\[2017-2018] JASON_Compiler_Template\JASON_Compiler\obj\Debug\JASON_Compiler.exe
 G:\college\2021-2022\First Term\Compilers\Compliers\This Year\Labs\Lab 3\[2020-2021] JASON_Compiler_Template\[2020-2021] JASON_Compiler_Template\[2017-2018] JASON_Compiler_Template\JASON_Compiler\obj\Debug\JASON_Compiler.pdb
+F:\year 3\1st term\Compiler Theory\project\Tiny_Language_Compiler\JASON_Compiler\obj\Debug\JASON_Compiler.csproj.AssemblyReference.cache
+F:\year 3\1st term\Compiler Theory\project\Tiny_Language_Compiler\JASON_Compiler\obj\Debug\JASON_Compiler.Form1.resources
+F:\year 3\1st term\Compiler Theory\project\Tiny_Language_Compiler\JASON_Compiler\obj\Debug\JASON_Compiler.Form2.resources
+F:\year 3\1st term\Compiler Theory\project\Tiny_Language_Compiler\JASON_Compiler\obj\Debug\JASON_Compiler.Properties.Resources.resources
+F:\year 3\1st term\Compiler Theory\project\Tiny_Language_Compiler\JASON_Compiler\obj\Debug\JASON_Compiler.csproj.GenerateResource.cache
+F:\year 3\1st term\Compiler Theory\project\Tiny_Language_Compiler\JASON_Compiler\obj\Debug\JASON_Compiler.csproj.CoreCompileInputs.cache
+F:\year 3\1st term\Compiler Theory\project\Tiny_Language_Compiler\JASON_Compiler\bin\Debug\JASON_Compiler.exe.config
+F:\year 3\1st term\Compiler Theory\project\Tiny_Language_Compiler\JASON_Compiler\bin\Debug\JASON_Compiler.exe
+F:\year 3\1st term\Compiler Theory\project\Tiny_Language_Compiler\JASON_Compiler\bin\Debug\JASON_Compiler.pdb
+F:\year 3\1st term\Compiler Theory\project\Tiny_Language_Compiler\JASON_Compiler\obj\Debug\JASON_Compiler.exe
+F:\year 3\1st term\Compiler Theory\project\Tiny_Language_Compiler\JASON_Compiler\obj\Debug\JASON_Compiler.pdb
