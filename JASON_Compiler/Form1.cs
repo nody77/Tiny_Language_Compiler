@@ -57,6 +57,7 @@ namespace JASON_Compiler
         private void button2_Click(object sender, EventArgs e)
         {
             dataGridView1.Rows.Clear();
+            textBox2.Clear();
             JASON_COMPILER.JASON_Compiler.TokenStream.Clear();
         }
 
