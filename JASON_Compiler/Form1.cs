@@ -58,6 +58,8 @@ namespace JASON_Compiler
         {
             dataGridView1.Rows.Clear();
             textBox2.Clear();
+            Errors.Error_List.Clear();
+            
             JASON_COMPILER.JASON_Compiler.TokenStream.Clear();
         }
 

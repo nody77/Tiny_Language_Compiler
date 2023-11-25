@@ -159,6 +159,10 @@ namespace JASON_Compiler
                                 CurrentLexeme += CurrentChar;
                                 break;
                             }
+                            else if(CurrentChar == '\n')
+                            {
+                                break;
+                            }
                             else
                             {
                                 CurrentLexeme += CurrentChar;
