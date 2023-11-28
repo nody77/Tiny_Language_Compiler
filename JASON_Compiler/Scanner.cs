@@ -374,9 +374,9 @@ namespace JASON_Compiler
                                 if (j < SourceCode.Length)
                                 {
                                     CurrentChar = SourceCode[j];
-                                    if (CurrentChar == '*' || CurrentChar == '\n' || CurrentChar=='\r')
+                                    if (CurrentChar == '*' || CurrentChar == '\n' || CurrentChar=='\r'|| CurrentChar == '\t')
                                     {
-                                        if(CurrentChar == '\n' || CurrentChar == '\r')
+                                        if(CurrentChar == '\n' || CurrentChar == '\r' || CurrentChar == '\t')
                                         {
                                             break;
                                         }
