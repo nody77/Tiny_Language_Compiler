@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Resources;
 using System.Text;
@@ -90,7 +91,7 @@ namespace JASON_Compiler
 
                 if (CurrentChar >= 'A' && CurrentChar <= 'z') //if you read a character
                 {
-                    // Identifier // Reserved Word  // String // Data Type //
+                    // Identifier // Reserved Word  // Data Type //
                     j += 1;
                     if (j < SourceCode.Length)
                     {
@@ -151,6 +152,7 @@ namespace JASON_Compiler
                         FindTokenClass(CurrentLexeme);
                     }
                 }
+                //single quote
                 else if (CurrentChar == '\'')
                 {
                     string CurrentLexeme = CurrentChar.ToString();
@@ -374,11 +376,30 @@ namespace JASON_Compiler
                                 if (j < SourceCode.Length)
                                 {
                                     CurrentChar = SourceCode[j];
-                                    if (CurrentChar == '*' || CurrentChar == '\n' || CurrentChar=='\r'|| CurrentChar == '\t')
+                                    if (CurrentChar == '*' || CurrentChar == '\n'||CurrentChar == '\r' || CurrentChar == '\t')
                                     {
-                                        if(CurrentChar == '\n' || CurrentChar == '\r' || CurrentChar == '\t')
+                                        if (CurrentChar == '\n')
                                         {
-                                            break;
+                                            //CurrentChar = SourceCode[j];
+                                            CurrentLexeme += CurrentChar;
+                                            continue;
+                                            //break;
+                                            //while (true)
+                                            //{
+                                            //    j++;
+                                            //    if (j < SourceCode.Length)
+                                            //    {
+                                            //        CurrentChar = SourceCode[j];
+                                            //        if()
+                                            //    }
+
+                                            //}
+                                        }
+                                        else if (CurrentChar == '\r' || CurrentChar == '\t')
+                                        {
+                                            //CurrentLexeme += CurrentChar;
+                                            continue;
+
                                         }
                                         CurrentLexeme += CurrentChar;
                                         j++;
@@ -388,7 +409,7 @@ namespace JASON_Compiler
                                             if (CurrentChar == '/')
                                             {
                                                 CurrentLexeme += CurrentChar;
-                                                //break;
+                                                break;
                                             }
                                             else
                                             {
@@ -421,7 +442,46 @@ namespace JASON_Compiler
                         FindTokenClass(CurrentLexeme);
                     }
                 }
+                else if (CurrentChar == '.')
+                {
+                    if (j + 1 < SourceCode.Length)
+                    {
+                        j += 1;
+                        string CurrentLexeme = CurrentChar.ToString();
+                        CurrentChar = SourceCode[j];
+                        while ((CurrentChar >= '0' && CurrentChar <= '9') || CurrentChar == '.' || (CurrentChar >= 'A' && CurrentChar <= 'z'))
+                        {
+
+                            CurrentLexeme += CurrentChar;
+                            j += 1;
+                            if (j < SourceCode.Length)
+                            {
+                                CurrentChar = SourceCode[j];
+                            }
+                            else
+                            {
+                                break;
+                            }
+
+                        }
+                        FindTokenClass(CurrentLexeme);
+                        i = j - 1;
+                    }
+                    else
+                    {
+                        string CurrentLexeme = CurrentChar.ToString();
+                        FindTokenClass(CurrentLexeme);
+                    }
+                }
+                else if (CurrentChar == '!')
+                {
+                    string CurrentLexeme = CurrentChar.ToString();
+                    CurrentChar = SourceCode[j];
+                    FindTokenClass(CurrentLexeme);
+                }
+
             }
+
 
             JASON_COMPILER.JASON_Compiler.TokenStream = Tokens;
         }
@@ -562,7 +622,7 @@ namespace JASON_Compiler
         }
         bool isComment(string lex)
         {
-            var rx = new Regex(@"^/\*.*\*/$");
+            var rx = new Regex(@"/\*(.|\s)*?\*/$");
             if (rx.IsMatch(lex))
             {
                 return true;
