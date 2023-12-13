@@ -39,7 +39,7 @@ namespace JASON_Compiler
             return program;
         }
         
-        // 1)Function Call ->  Identifier( idlist )
+        // 1)FunctionCall ->  Identifier( idlist )
         Node FunctionCall()
         {
             Node functionCall = new Node("FunctionCall");
@@ -60,6 +60,10 @@ namespace JASON_Compiler
                 idlist.Children.Add(match(Token_Class.Idenifier));
                 idlist.Children.Add(Idenlist());
             }
+            else
+            {
+                return null;
+            }
             return idlist;
         }
 
@@ -73,10 +77,14 @@ namespace JASON_Compiler
                 idenlist.Children.Add(match(Token_Class.Idenifier));
                 idenlist.Children.Add(Idenlist());
             }
+            else
+            {
+                return null;
+            }
             return idenlist;
         }
 
-        //2)Term  Number | Identifier | Function Call    --> not done yet
+        //2)Term -> Number | Identifier | FunctionCall 
         Node Term()
         {
             Node term = new Node("Term");
@@ -86,22 +94,175 @@ namespace JASON_Compiler
             }
             else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
             {
-                term.Children.Add(match(Token_Class.Idenifier));
+                
+                if (InputPointer+1 < TokenStream.Count && TokenStream[InputPointer+1].token_type == Token_Class.LBrackets)
+                {
+                    term.Children.Add(FunctionCall());
+                }
+                else
+                {
+                    term.Children.Add(match(Token_Class.Idenifier));
+                }        
             }
             else
             {
-                term.Children.Add(FunctionCall());
+                //ErroList
+                Errors.Error_List.Add("Parsing Error: Expected Term and " +
+                       TokenStream[InputPointer].token_type.ToString() +
+                       "  found\r\n");
+                InputPointer++;
+                return null;
             }
             return term;
         }
 
+         //3)Equation -> TermList  |( Eq ) EquationList
         Node Equation() // --> not done yet 
         {
             Node equation = new Node("Equation");
-            return equation;
+            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.LBrackets)
+            { 
+                equation.Children.Add(match(Token_Class.LBrackets));
+                equation.Children.Add(Eq());
+                equation.Children.Add(match(Token_Class.RBrackets));
+                equation.Children.Add(EquationList());
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Number)
+            {
+                equation.Children.Add(TermList());
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            {
+                equation.Children.Add(TermList());
+            }
+            else
+            {
+                Errors.Error_List.Add("Parsing Error: Expected Equation and " +
+                      TokenStream[InputPointer].token_type.ToString() +
+                      "  found\r\n");
+                InputPointer++;
+                return null;
+            }
+                return equation;
         }
+        //TermList -> Term ArithmaticOperator EqList EquationList 
+        Node TermList()
+        {
+            Node termList = new Node("Term List");
+            termList.Children.Add(Term());
+            termList.Children.Add(ArithmaticOperator());
+            termList.Children.Add(EqList());
+            termList.Children.Add(EquationList());
+            return termList;
+        }
+        //Eq -> TermList  |( TermList ) EquationList 
+        Node Eq()
+        {
+            Node eq = new Node("Eq");
+            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.LBrackets)
+            {
+                eq.Children.Add(match(Token_Class.LBrackets));
+                eq.Children.Add(TermList());
+                eq.Children.Add(match(Token_Class.RBrackets));
+                eq.Children.Add(EquationList());
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Number)
+            {
+                eq.Children.Add(TermList());
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            {
+                eq.Children.Add(TermList());
+            }
+            else
+            {
+                Errors.Error_List.Add("Parsing Error: Expected Equation and " +
+                     TokenStream[InputPointer].token_type.ToString() +
+                     "  found\r\n");
+                InputPointer++;
+                return null;
+            }
+            return eq;
+        }
+        //EquationList ->  ArithmaticOperator EqList  | ε
+        Node EquationList()
+        {
+            Node equationList = new Node("Equation List");
+            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.PlusOp || TokenStream[InputPointer].token_type == Token_Class.MinusOp || TokenStream[InputPointer].token_type == Token_Class.MultiplyOp || TokenStream[InputPointer].token_type == Token_Class.DivideOp))
+            { 
+                equationList.Children.Add(ArithmaticOperator());
+                equationList.Children.Add(EqList());
+            }
+            else
+            {
+                return null;
+            }
+                return equationList;
+        }
+        // EqList -> Term EquationList |(TermList ) EquationList
+        Node EqList()
+        {
+            Node eqList = new Node(" Eq List");
+            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier )
+            { 
+                eqList.Children.Add(Term());
+                eqList.Children.Add(EquationList());
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Number)
+            {
+                eqList.Children.Add(Term());
+                eqList.Children.Add(EquationList());
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.LBrackets )
+            {
+                eqList.Children.Add(match(Token_Class.LBrackets));
+                eqList.Children.Add(TermList());
+                eqList.Children.Add(match(Token_Class.RBrackets));
+                eqList.Children.Add(EquationList());
+            }
+            else
+            {
+                Errors.Error_List.Add("Parsing Error: Expected EqList and " +
+                     TokenStream[InputPointer].token_type.ToString() +
+                     "  found\r\n");
+                InputPointer++;
+                return null;
+            }
+            return eqList;
+        }
+        // ArithmaticOperator -> + | - | * | /
+        Node ArithmaticOperator()
+        {
+            Node arithmaticOperator = new Node("Arithmatic Operator");
+            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.PlusOp)
+            {
+                arithmaticOperator.Children.Add(match(Token_Class.PlusOp));
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.MinusOp)
+            {
+                arithmaticOperator.Children.Add(match(Token_Class.MinusOp));
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.MultiplyOp)
+            {
+                arithmaticOperator.Children.Add(match(Token_Class.MultiplyOp));
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.DivideOp)
+            {
+                arithmaticOperator.Children.Add(match(Token_Class.DivideOp));
+            }
+            else
+            {
+                // ErrorList
+                Errors.Error_List.Add("Parsing Error: Expected Arithmatic Operator and " +
+                     TokenStream[InputPointer].token_type.ToString() +
+                     "  found\r\n");
+                InputPointer++;
+                return null;
+            }
+            return arithmaticOperator;
 
-        //4)Expression  String | Term | Equation --> not done yet 
+        }
+        //4)Expression -> String | Term | Equation
         Node Expression()
         {
             Node expression = new Node("Expression");
@@ -109,14 +270,42 @@ namespace JASON_Compiler
             {
                 expression.Children.Add(match(Token_Class.Number));
             }
-            //else if (InputPointer < TokenStream.Count && TokenStream[InputPointer]. == Token_Class)
-            //{
-            //    expression.Children.Add(match(Token_Class.Idenifier));
-            //}
-            //else
-            //{
-            //    expression.Children.Add(FunctionCall());
-            //}
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Number)
+            {
+                if (InputPointer + 1 < TokenStream.Count && (TokenStream[InputPointer + 1].token_type == Token_Class.PlusOp || TokenStream[InputPointer + 1].token_type == Token_Class.MinusOp || TokenStream[InputPointer + 1].token_type == Token_Class.MultiplyOp || TokenStream[InputPointer + 1].token_type == Token_Class.DivideOp))
+                {
+                    expression.Children.Add(Equation());
+                }
+                else
+                {
+                    expression.Children.Add(Term());
+                }
+                   
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            {
+                if (InputPointer + 1 < TokenStream.Count && (TokenStream[InputPointer + 1].token_type == Token_Class.PlusOp || TokenStream[InputPointer + 1].token_type == Token_Class.MinusOp || TokenStream[InputPointer + 1].token_type == Token_Class.MultiplyOp || TokenStream[InputPointer + 1].token_type == Token_Class.DivideOp))
+                {
+                    expression.Children.Add(Equation());
+                }
+                else
+                {
+                    expression.Children.Add(Term());
+                }
+                
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.LBrackets)
+            {
+                expression.Children.Add(Equation());
+            }
+            else
+            {
+                Errors.Error_List.Add("Parsing Error: Expected Term and " +
+                      TokenStream[InputPointer].token_type.ToString() +
+                      "  found\r\n");
+                InputPointer++;
+                return null;
+            }
             return expression;
         }
 
@@ -189,17 +378,9 @@ namespace JASON_Compiler
         Node Datatype()
         {
             Node datatype = new Node("Data type");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Int)
+            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.DataTypes)
             {
-                datatype.Children.Add(match(Token_Class.Int));
-            }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Float)
-            {
-                datatype.Children.Add(match(Token_Class.Float));
-            }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.String)
-            {
-                datatype.Children.Add(match(Token_Class.String));
+                datatype.Children.Add(match(Token_Class.DataTypes));
             }
             else
             {
@@ -214,6 +395,7 @@ namespace JASON_Compiler
             Node writeStatement = new Node("Write Statement");
             writeStatement.Children.Add(match(Token_Class.Write));
             writeStatement.Children.Add(WriteStmt());
+            writeStatement.Children.Add(match(Token_Class.Semicolon));
             return writeStatement;
         }
 
@@ -288,7 +470,6 @@ namespace JASON_Compiler
             return conditionalOperator;
 
         }
-        //                               check                                         //
 
         // 11)ConditionalStatement -> Condition BooleanStatments
         Node ConditionalStatement()
