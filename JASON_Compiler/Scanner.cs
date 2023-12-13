@@ -12,7 +12,7 @@ public enum Token_Class
     Else, If,
     Read, Then, Until, Write, Number, String, Comment,
     Dot, Semicolon, Comma, LParanthesis, RParanthesis, EqualOp, LessThanOp,
-    GreaterThanOp, NotEqualOp, PlusOp, MinusOp, MultiplyOp, DivideOp, Main,
+    GreaterThanOp, NotEqualOp, PlusOp, MinusOp, MultiplyOp, DivideOp, Main,End,
     Idenifier, Constant, DataTypes, repeat, Elseif, Return, endl, And, Or, Assignment, LBrackets, RBrackets
 }
 namespace JASON_Compiler
@@ -45,7 +45,7 @@ namespace JASON_Compiler
             ReservedWords.Add("elseif", Token_Class.Elseif);
             ReservedWords.Add("return", Token_Class.Return);
             ReservedWords.Add("endl", Token_Class.endl);
-
+            ReservedWords.Add("end", Token_Class.End);
 
             Operators.Add(".", Token_Class.Dot);
             Operators.Add(";", Token_Class.Semicolon);
