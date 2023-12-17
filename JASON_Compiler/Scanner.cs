@@ -13,7 +13,7 @@ public enum Token_Class
     Read, Then, Until, Write, Number, String, Comment,
     Dot, Semicolon, Comma, LParanthesis, RParanthesis, EqualOp, LessThanOp,
     GreaterThanOp, NotEqualOp, PlusOp, MinusOp, MultiplyOp, DivideOp, Main,End,
-    Idenifier, Constant, DataTypes, repeat, Elseif, Return, endl, And, Or, Assignment, LBrackets, RBrackets
+    Idenifier, Constant, Int_Datatype , Float_Datatype , String_Datatype, repeat, Elseif, Return, endl, And, Or, Assignment, LBrackets, RBrackets
 }
 namespace JASON_Compiler
 {
@@ -71,9 +71,9 @@ namespace JASON_Compiler
 
             Operators.Add(":=", Token_Class.Assignment);
 
-            DataTypes.Add("int", Token_Class.DataTypes);
-            DataTypes.Add("float", Token_Class.DataTypes);
-            DataTypes.Add("string", Token_Class.DataTypes);
+            DataTypes.Add("int", Token_Class.Int_Datatype);
+            DataTypes.Add("float", Token_Class.Float_Datatype);
+            DataTypes.Add("string", Token_Class.String_Datatype);
 
 
         }
@@ -380,24 +380,13 @@ namespace JASON_Compiler
                                     {
                                         if (CurrentChar == '\n')
                                         {
-                                            //CurrentChar = SourceCode[j];
+                                     
                                             CurrentLexeme += CurrentChar;
                                             continue;
-                                            //break;
-                                            //while (true)
-                                            //{
-                                            //    j++;
-                                            //    if (j < SourceCode.Length)
-                                            //    {
-                                            //        CurrentChar = SourceCode[j];
-                                            //        if()
-                                            //    }
-
-                                            //}
+                                          
                                         }
                                         else if (CurrentChar == '\r' || CurrentChar == '\t')
                                         {
-                                            //CurrentLexeme += CurrentChar;
                                             continue;
 
                                         }
@@ -479,6 +468,12 @@ namespace JASON_Compiler
                     CurrentChar = SourceCode[j];
                     FindTokenClass(CurrentLexeme);
                 }
+                else if (CurrentChar == ',')
+                {
+                    string CurrentLexeme = CurrentChar.ToString();
+                    CurrentChar = SourceCode[j];
+                    FindTokenClass(CurrentLexeme);
+                }
 
             }
 
@@ -555,6 +550,12 @@ namespace JASON_Compiler
                 Tok.token_type = Token_Class.Semicolon;
                 Tokens.Add(Tok);
             }
+            //Is it a comma?
+            else if (isComma(Lex))
+            {
+                Tok.token_type = Token_Class.Comma;
+                Tokens.Add(Tok);
+            }
             //Is it an identifier?
             else if (isIdentifier(Lex))
             {
@@ -604,7 +605,6 @@ namespace JASON_Compiler
                 return false;
             }
         }
-
 
         bool isIdentifier(string lex)
         {
@@ -699,7 +699,18 @@ namespace JASON_Compiler
                 return false;
             }
         }
-
+        bool isComma(string lex)
+        {
+            string v = ",";
+            if (lex == v)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         bool isBracket(string lex)
         {
             bool isValid = false;

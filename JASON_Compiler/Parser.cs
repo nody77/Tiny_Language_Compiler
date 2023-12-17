@@ -36,8 +36,17 @@ namespace JASON_Compiler
         Node Programs()
         {
             Node programs = new Node("Program");
-            programs.Children.Add(Funcstat());
-            programs.Children.Add(MainFunction());
+            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Int_Datatype || TokenStream[InputPointer].token_type == Token_Class.String_Datatype || TokenStream[InputPointer].token_type == Token_Class.Float_Datatype))
+            {
+                if (InputPointer +1  < TokenStream.Count && TokenStream[InputPointer +1 ].token_type == Token_Class.Main)
+                {
+                    programs.Children.Add(MainFunction());
+                }
+                else
+                {
+                    programs.Children.Add(Funcstat());
+                }
+            }
             //MessageBox.Show("Success");
             return programs;
         }
@@ -271,7 +280,7 @@ namespace JASON_Compiler
             Node expression = new Node("Expression");
             if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.String)
             {
-                expression.Children.Add(match(Token_Class.Number));
+                expression.Children.Add(match(Token_Class.String));
             }
             else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Number)
             {
@@ -328,6 +337,7 @@ namespace JASON_Compiler
             Node declarationStatement = new Node("Declaration Statement");
             declarationStatement.Children.Add(Datatype());  //modified --> Datatype()
             declarationStatement.Children.Add(Declist());
+            declarationStatement.Children.Add(match(Token_Class.Semicolon));
             return declarationStatement;
         }
 
@@ -368,6 +378,10 @@ namespace JASON_Compiler
                 assignmentlist.Children.Add(match(Token_Class.Comma));
                 assignmentlist.Children.Add(AssList());
             }
+            else
+            {
+                return null;
+            }
             return assignmentlist;
         }
 
@@ -403,9 +417,17 @@ namespace JASON_Compiler
         Node Datatype()
         {
             Node datatype = new Node("Data type");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.DataTypes)
+            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Float_Datatype)
             {
-                datatype.Children.Add(match(Token_Class.DataTypes));
+                datatype.Children.Add(match(Token_Class.Float_Datatype));
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Int_Datatype)
+            {
+                datatype.Children.Add(match(Token_Class.Int_Datatype));
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.String_Datatype)
+            {
+                datatype.Children.Add(match(Token_Class.String_Datatype));
             }
             else
             {
@@ -592,7 +614,7 @@ namespace JASON_Compiler
                 }
 
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.DataTypes)
+            else if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Float_Datatype|| TokenStream[InputPointer].token_type == Token_Class.String_Datatype || TokenStream[InputPointer].token_type == Token_Class.Int_Datatype))
             {
                 statement.Children.Add(DeclarationStatement());
             }
@@ -614,7 +636,7 @@ namespace JASON_Compiler
         Node Statements()
         {
             Node statements = new Node("Statements");
-            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Write || TokenStream[InputPointer].token_type == Token_Class.Read || TokenStream[InputPointer].token_type == Token_Class.Idenifier || TokenStream[InputPointer].token_type == Token_Class.DataTypes || TokenStream[InputPointer].token_type == Token_Class.repeat))
+            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Write || TokenStream[InputPointer].token_type == Token_Class.Read || TokenStream[InputPointer].token_type == Token_Class.Idenifier || TokenStream[InputPointer].token_type == Token_Class.Int_Datatype || TokenStream[InputPointer].token_type == Token_Class.String_Datatype || TokenStream[InputPointer].token_type == Token_Class.Float_Datatype || TokenStream[InputPointer].token_type == Token_Class.repeat))
             {
                 statements.Children.Add(Statement());
                 statements.Children.Add(Statements());
@@ -763,7 +785,7 @@ namespace JASON_Compiler
         Node Paramlist()
         {
             Node paramlist = new Node("Param list");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.DataTypes)
+            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Float_Datatype|| TokenStream[InputPointer].token_type == Token_Class.Int_Datatype|| TokenStream[InputPointer].token_type == Token_Class.String_Datatype))
             {
                 paramlist.Children.Add(Parameter());
                 paramlist.Children.Add(Parameters());
@@ -825,7 +847,7 @@ namespace JASON_Compiler
         Node Funcstat()
         {
             Node funcstat = new Node("Func stat");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.DataTypes)
+            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Float_Datatype|| TokenStream[InputPointer].token_type == Token_Class.Int_Datatype|| TokenStream[InputPointer].token_type == Token_Class.String_Datatype))
             {
                 funcstat.Children.Add(FunctionStatment());
                 funcstat.Children.Add(Funcstat());
