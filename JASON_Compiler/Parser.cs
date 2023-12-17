@@ -45,6 +45,7 @@ namespace JASON_Compiler
                 else
                 {
                     programs.Children.Add(Funcstat());
+                    programs.Children.Add(MainFunction());
                 }
             }
             //MessageBox.Show("Success");
@@ -594,7 +595,7 @@ namespace JASON_Compiler
             return booleanOperator;
         }
 
-        // 12)Statement -> Write Statement | Read Statement | Assignment Statement | Declaration Statement | Repeat Statement
+        // 12)Statement -> Write Statement | Read Statement | Assignment Statement | Declaration Statement | Repeat Statement | IF Statement 
         Node Statement()
         {
             Node statement = new Node("Statement");
@@ -611,6 +612,7 @@ namespace JASON_Compiler
                 if (InputPointer + 1 < TokenStream.Count && TokenStream[InputPointer + 1].token_type == Token_Class.Assignment)
                 {
                     statement.Children.Add(AssignmentStatment());
+                    statement.Children.Add(match(Token_Class.Semicolon));
                 }
 
             }
@@ -621,6 +623,10 @@ namespace JASON_Compiler
             else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.repeat)
             {
                 statement.Children.Add(RepeatStatment());
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.If)
+            {
+                statement.Children.Add(IFStatement());
             }
             else
             {
@@ -636,7 +642,7 @@ namespace JASON_Compiler
         Node Statements()
         {
             Node statements = new Node("Statements");
-            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Write || TokenStream[InputPointer].token_type == Token_Class.Read || TokenStream[InputPointer].token_type == Token_Class.Idenifier || TokenStream[InputPointer].token_type == Token_Class.Int_Datatype || TokenStream[InputPointer].token_type == Token_Class.String_Datatype || TokenStream[InputPointer].token_type == Token_Class.Float_Datatype || TokenStream[InputPointer].token_type == Token_Class.repeat))
+            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Write || TokenStream[InputPointer].token_type == Token_Class.Read || TokenStream[InputPointer].token_type == Token_Class.Idenifier || TokenStream[InputPointer].token_type == Token_Class.Int_Datatype || TokenStream[InputPointer].token_type == Token_Class.String_Datatype || TokenStream[InputPointer].token_type == Token_Class.Float_Datatype || TokenStream[InputPointer].token_type == Token_Class.repeat || TokenStream[InputPointer].token_type == Token_Class.If))
             {
                 statements.Children.Add(Statement());
                 statements.Children.Add(Statements());
@@ -713,7 +719,7 @@ namespace JASON_Compiler
             elseIfStatement.Children.Add(ElseIfFollowingList());
             return elseIfStatement;
         }
-        //ElseIfFollowingList -> ElseStatment | end
+        //ElseIfFollowingList -> ElseStatment | end | ElseIfStmtList
         Node ElseIfFollowingList()
         {
             Node elseIfFollowingList = new Node("Else If Following List");
@@ -724,6 +730,10 @@ namespace JASON_Compiler
             else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Else)
             {
                 elseIfFollowingList.Children.Add(ElseStatement());
+            }
+            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Elseif)
+            {
+                elseIfFollowingList.Children.Add(ElseIfStmtList());
             }
             else
             {
@@ -849,6 +859,10 @@ namespace JASON_Compiler
             Node funcstat = new Node("Func stat");
             if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Float_Datatype|| TokenStream[InputPointer].token_type == Token_Class.Int_Datatype|| TokenStream[InputPointer].token_type == Token_Class.String_Datatype))
             {
+                if (InputPointer+1 < TokenStream.Count && TokenStream[InputPointer+1].token_type == Token_Class.Main)
+                {
+                    return null;
+                }
                 funcstat.Children.Add(FunctionStatment());
                 funcstat.Children.Add(Funcstat());
             }
