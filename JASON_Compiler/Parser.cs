@@ -27,11 +27,21 @@ namespace JASON_Compiler
         {
             this.InputPointer = 0;
             this.TokenStream = TokenStream;
+            RemoveComments();
             root = new Node("Program");
             root.Children.Add(Programs());
             return root;
         }
-
+        void RemoveComments()
+        {
+            foreach (Token token in this.TokenStream.ToList())
+            {
+                if(token.token_type == Token_Class.Comment)
+                {
+                    this.TokenStream.Remove(token);
+                }
+            } 
+        }
         //23)Programs -> funcstat MainFunction
         Node Programs()
         {
@@ -595,7 +605,7 @@ namespace JASON_Compiler
             return booleanOperator;
         }
 
-        // 12)Statement -> Write Statement | Read Statement | Assignment Statement | Declaration Statement | Repeat Statement | IF Statement 
+        // 12)Statement -> Write Statement | Read Statement | Assignment Statement | Declaration Statement | Repeat Statement | IF Statement | ε
         Node Statement()
         {
             Node statement = new Node("Statement");
@@ -630,28 +640,33 @@ namespace JASON_Compiler
             }
             else
             {
-                Errors.Error_List.Add("Parsing Error: Expected Statement and " +
-                      TokenStream[InputPointer].token_type.ToString() +
-                      "  found\r\n");
-                InputPointer++;
                 return null;
             }
             return statement;
         }
-        //Statements -> Statement Statements | ε
+        //Statements -> Statement State
         Node Statements()
         {
             Node statements = new Node("Statements");
-            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Write || TokenStream[InputPointer].token_type == Token_Class.Read || TokenStream[InputPointer].token_type == Token_Class.Idenifier || TokenStream[InputPointer].token_type == Token_Class.Int_Datatype || TokenStream[InputPointer].token_type == Token_Class.String_Datatype || TokenStream[InputPointer].token_type == Token_Class.Float_Datatype || TokenStream[InputPointer].token_type == Token_Class.repeat || TokenStream[InputPointer].token_type == Token_Class.If))
+            statements.Children.Add(Statement());
+            statements.Children.Add(State());
+            
+            return statements;
+        }
+        //State --> Statment State | ε
+        Node State ()
+        {
+            Node states = new Node("State");
+            if(InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Write || TokenStream[InputPointer].token_type == Token_Class.Read || TokenStream[InputPointer].token_type == Token_Class.Idenifier || TokenStream[InputPointer].token_type == Token_Class.Int_Datatype || TokenStream[InputPointer].token_type == Token_Class.String_Datatype || TokenStream[InputPointer].token_type == Token_Class.Float_Datatype || TokenStream[InputPointer].token_type == Token_Class.repeat || TokenStream[InputPointer].token_type == Token_Class.If))
             {
-                statements.Children.Add(Statement());
-                statements.Children.Add(Statements());
+                states.Children.Add(Statement());
+                states.Children.Add(State());
             }
             else
             {
                 return null;
             }
-            return statements;
+            return states;
         }
         // 13)IFStatement -> if ConditionalStatement then Statements IFStmtList
         Node IFStatement()
