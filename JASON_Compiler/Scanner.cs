@@ -241,7 +241,7 @@ namespace JASON_Compiler
                         {
                             string CurrentLexeme = CurrentChar.ToString();
                             CurrentChar = SourceCode[j];
-                            if (SourceCode[i - 1] <= '0' || SourceCode[i - 1] >= '9')
+                            if ((SourceCode[i - 1] <= '0' || SourceCode[i - 1] >= '9') && (SourceCode[i - 1] <= 'A' || SourceCode[i - 1] >= 'z'))
                             {
                                 while (CurrentChar >= '0' && CurrentChar <= '9' || CurrentChar == '.')
                                 {
