@@ -20,13 +20,13 @@ namespace JASON_Compiler
     public class Parser
     {
         int InputPointer = 0;
-        List<Token> TokenStream;
+        List<Token> TokenStreaminParser;
         public Node root;
 
         public Node StartParsing(List<Token> TokenStream)
         {
-            this.InputPointer = 0;
-            this.TokenStream = TokenStream;
+            InputPointer = 0;
+            TokenStreaminParser = TokenStream.ToList();
             RemoveComments();
             root = new Node("Program");
             root.Children.Add(Programs());
@@ -34,11 +34,11 @@ namespace JASON_Compiler
         }
         void RemoveComments()
         {
-            foreach (Token token in this.TokenStream.ToList())
+            foreach (Token token in TokenStreaminParser.ToList())
             {
                 if(token.token_type == Token_Class.Comment)
                 {
-                    this.TokenStream.Remove(token);
+                    TokenStreaminParser.Remove(token);
                 }
             } 
         }
@@ -46,9 +46,9 @@ namespace JASON_Compiler
         Node Programs()
         {
             Node programs = new Node("Program");
-            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Int_Datatype || TokenStream[InputPointer].token_type == Token_Class.String_Datatype || TokenStream[InputPointer].token_type == Token_Class.Float_Datatype))
+            if (InputPointer < TokenStreaminParser.Count && (TokenStreaminParser[InputPointer].token_type == Token_Class.Int_Datatype || TokenStreaminParser[InputPointer].token_type == Token_Class.String_Datatype || TokenStreaminParser[InputPointer].token_type == Token_Class.Float_Datatype))
             {
-                if (InputPointer +1  < TokenStream.Count && TokenStream[InputPointer +1 ].token_type == Token_Class.Main)
+                if (InputPointer +1  < TokenStreaminParser.Count && TokenStreaminParser[InputPointer +1 ].token_type == Token_Class.Main)
                 {
                     programs.Children.Add(MainFunction());
                 }
@@ -78,7 +78,7 @@ namespace JASON_Compiler
         Node Idlist()
         {
             Node idlist = new Node("Idlist");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier)
             {
                 idlist.Children.Add(match(Token_Class.Idenifier));
                 idlist.Children.Add(Idenlist());
@@ -94,7 +94,7 @@ namespace JASON_Compiler
         Node Idenlist()
         {
             Node idenlist = new Node("Idenlist");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Comma)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Comma)
             {
                 idenlist.Children.Add(match(Token_Class.Comma));
                 idenlist.Children.Add(match(Token_Class.Idenifier));
@@ -111,14 +111,14 @@ namespace JASON_Compiler
         Node Term()
         {
             Node term = new Node("Term");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Number)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Number)
             {
                 term.Children.Add(match(Token_Class.Number));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier)
             {
 
-                if (InputPointer + 1 < TokenStream.Count && TokenStream[InputPointer + 1].token_type == Token_Class.LBrackets)
+                if (InputPointer + 1 < TokenStreaminParser.Count && TokenStreaminParser[InputPointer + 1].token_type == Token_Class.LBrackets)
                 {
                     term.Children.Add(FunctionCall());
                 }
@@ -131,9 +131,9 @@ namespace JASON_Compiler
             {
                 //ErroList
                 Errors.Error_List.Add("Parsing Error: Expected Term and " +
-                       TokenStream[InputPointer].token_type.ToString() +
+                       TokenStreaminParser[InputPointer].token_type.ToString() +
                        "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return term;
@@ -143,27 +143,27 @@ namespace JASON_Compiler
         Node Equation()
         {
             Node equation = new Node("Equation");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.LBrackets)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.LBrackets)
             {
                 equation.Children.Add(match(Token_Class.LBrackets));
                 equation.Children.Add(Eq());
                 equation.Children.Add(match(Token_Class.RBrackets));
                 equation.Children.Add(EquationList());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Number)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Number)
             {
                 equation.Children.Add(TermList());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier)
             {
                 equation.Children.Add(TermList());
             }
             else
             {
                 Errors.Error_List.Add("Parsing Error: Expected Equation and " +
-                      TokenStream[InputPointer].token_type.ToString() +
+                      TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return equation;
@@ -182,27 +182,27 @@ namespace JASON_Compiler
         Node Eq()
         {
             Node eq = new Node("Eq");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.LBrackets)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.LBrackets)
             {
                 eq.Children.Add(match(Token_Class.LBrackets));
                 eq.Children.Add(TermList());
                 eq.Children.Add(match(Token_Class.RBrackets));
                 eq.Children.Add(EquationList());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Number)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Number)
             {
                 eq.Children.Add(TermList());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier)
             {
                 eq.Children.Add(TermList());
             }
             else
             {
                 Errors.Error_List.Add("Parsing Error: Expected Equation and " +
-                     TokenStream[InputPointer].token_type.ToString() +
+                     TokenStreaminParser[InputPointer].token_type.ToString() +
                      "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return eq;
@@ -211,7 +211,7 @@ namespace JASON_Compiler
         Node EquationList()
         {
             Node equationList = new Node("Equation List");
-            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.PlusOp || TokenStream[InputPointer].token_type == Token_Class.MinusOp || TokenStream[InputPointer].token_type == Token_Class.MultiplyOp || TokenStream[InputPointer].token_type == Token_Class.DivideOp))
+            if (InputPointer < TokenStreaminParser.Count && (TokenStreaminParser[InputPointer].token_type == Token_Class.PlusOp || TokenStreaminParser[InputPointer].token_type == Token_Class.MinusOp || TokenStreaminParser[InputPointer].token_type == Token_Class.MultiplyOp || TokenStreaminParser[InputPointer].token_type == Token_Class.DivideOp))
             {
                 equationList.Children.Add(ArithmaticOperator());
                 equationList.Children.Add(EqList());
@@ -226,17 +226,17 @@ namespace JASON_Compiler
         Node EqList()
         {
             Node eqList = new Node(" Eq List");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier)
             {
                 eqList.Children.Add(Term());
                 eqList.Children.Add(EquationList());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Number)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Number)
             {
                 eqList.Children.Add(Term());
                 eqList.Children.Add(EquationList());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.LBrackets)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.LBrackets)
             {
                 eqList.Children.Add(match(Token_Class.LBrackets));
                 eqList.Children.Add(TermList());
@@ -246,9 +246,9 @@ namespace JASON_Compiler
             else
             {
                 Errors.Error_List.Add("Parsing Error: Expected EqList and " +
-                     TokenStream[InputPointer].token_type.ToString() +
+                     TokenStreaminParser[InputPointer].token_type.ToString() +
                      "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return eqList;
@@ -257,19 +257,19 @@ namespace JASON_Compiler
         Node ArithmaticOperator()
         {
             Node arithmaticOperator = new Node("Arithmatic Operator");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.PlusOp)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.PlusOp)
             {
                 arithmaticOperator.Children.Add(match(Token_Class.PlusOp));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.MinusOp)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.MinusOp)
             {
                 arithmaticOperator.Children.Add(match(Token_Class.MinusOp));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.MultiplyOp)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.MultiplyOp)
             {
                 arithmaticOperator.Children.Add(match(Token_Class.MultiplyOp));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.DivideOp)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.DivideOp)
             {
                 arithmaticOperator.Children.Add(match(Token_Class.DivideOp));
             }
@@ -277,9 +277,9 @@ namespace JASON_Compiler
             {
                 // ErrorList
                 Errors.Error_List.Add("Parsing Error: Expected Arithmatic Operator and " +
-                     TokenStream[InputPointer].token_type.ToString() +
+                     TokenStreaminParser[InputPointer].token_type.ToString() +
                      "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return arithmaticOperator;
@@ -289,13 +289,13 @@ namespace JASON_Compiler
         Node Expression()
         {
             Node expression = new Node("Expression");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.String)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.String)
             {
                 expression.Children.Add(match(Token_Class.String));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Number)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Number)
             {
-                if (InputPointer + 1 < TokenStream.Count && (TokenStream[InputPointer + 1].token_type == Token_Class.PlusOp || TokenStream[InputPointer + 1].token_type == Token_Class.MinusOp || TokenStream[InputPointer + 1].token_type == Token_Class.MultiplyOp || TokenStream[InputPointer + 1].token_type == Token_Class.DivideOp))
+                if (InputPointer + 1 < TokenStreaminParser.Count && (TokenStreaminParser[InputPointer + 1].token_type == Token_Class.PlusOp || TokenStreaminParser[InputPointer + 1].token_type == Token_Class.MinusOp || TokenStreaminParser[InputPointer + 1].token_type == Token_Class.MultiplyOp || TokenStreaminParser[InputPointer + 1].token_type == Token_Class.DivideOp))
                 {
                     expression.Children.Add(Equation());
                 }
@@ -305,9 +305,9 @@ namespace JASON_Compiler
                 }
 
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier)
             {
-                if (InputPointer + 1 < TokenStream.Count && (TokenStream[InputPointer + 1].token_type == Token_Class.PlusOp || TokenStream[InputPointer + 1].token_type == Token_Class.MinusOp || TokenStream[InputPointer + 1].token_type == Token_Class.MultiplyOp || TokenStream[InputPointer + 1].token_type == Token_Class.DivideOp))
+                if (InputPointer + 1 < TokenStreaminParser.Count && (TokenStreaminParser[InputPointer + 1].token_type == Token_Class.PlusOp || TokenStreaminParser[InputPointer + 1].token_type == Token_Class.MinusOp || TokenStreaminParser[InputPointer + 1].token_type == Token_Class.MultiplyOp || TokenStreaminParser[InputPointer + 1].token_type == Token_Class.DivideOp))
                 {
                     expression.Children.Add(Equation());
                 }
@@ -317,16 +317,16 @@ namespace JASON_Compiler
                 }
 
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.LBrackets)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.LBrackets)
             {
                 expression.Children.Add(Equation());
             }
             else
             {
                 Errors.Error_List.Add("Parsing Error: Expected Term and " +
-                      TokenStream[InputPointer].token_type.ToString() +
+                      TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return expression;
@@ -356,9 +356,9 @@ namespace JASON_Compiler
         Node Declist()
         {
             Node declist = new Node("Declist");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier)
             {
-                if (InputPointer + 1 < TokenStream.Count && TokenStream[InputPointer + 1].token_type == Token_Class.Assignment)
+                if (InputPointer + 1 < TokenStreaminParser.Count && TokenStreaminParser[InputPointer + 1].token_type == Token_Class.Assignment)
                 {
                     declist.Children.Add(AssignmentStatment());
                     declist.Children.Add(Assignmentlist());
@@ -372,9 +372,9 @@ namespace JASON_Compiler
             else
             {
                 Errors.Error_List.Add("Parsing Error: Expected Dec list and " +
-                      TokenStream[InputPointer].token_type.ToString() +
+                      TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return declist;
@@ -384,7 +384,7 @@ namespace JASON_Compiler
         Node Assignmentlist()
         {
             Node assignmentlist = new Node("Assignment list");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Comma)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Comma)
             {
                 assignmentlist.Children.Add(match(Token_Class.Comma));
                 assignmentlist.Children.Add(AssList());
@@ -400,9 +400,9 @@ namespace JASON_Compiler
         Node AssList()
         {
             Node assList = new Node("Ass List");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier)
             {
-                if (InputPointer + 1 < TokenStream.Count && TokenStream[InputPointer + 1].token_type == Token_Class.Assignment)
+                if (InputPointer + 1 < TokenStreaminParser.Count && TokenStreaminParser[InputPointer + 1].token_type == Token_Class.Assignment)
                 {
                     assList.Children.Add(AssignmentStatment());
                     assList.Children.Add(Assignmentlist());
@@ -416,9 +416,9 @@ namespace JASON_Compiler
             else
             {
                 Errors.Error_List.Add("Parsing Error: Expected Ass List and " +
-                      TokenStream[InputPointer].token_type.ToString() +
+                      TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return assList;
@@ -428,15 +428,15 @@ namespace JASON_Compiler
         Node Datatype()
         {
             Node datatype = new Node("Data type");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Float_Datatype)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Float_Datatype)
             {
                 datatype.Children.Add(match(Token_Class.Float_Datatype));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Int_Datatype)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Int_Datatype)
             {
                 datatype.Children.Add(match(Token_Class.Int_Datatype));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.String_Datatype)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.String_Datatype)
             {
                 datatype.Children.Add(match(Token_Class.String_Datatype));
             }
@@ -444,9 +444,9 @@ namespace JASON_Compiler
             {
                 //Error List
                 Errors.Error_List.Add("Parsing Error: Expected Datatype and " +
-                      TokenStream[InputPointer].token_type.ToString() +
+                      TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return datatype;
@@ -466,19 +466,19 @@ namespace JASON_Compiler
         Node WriteStmt()
         {
             Node writeStmt = new Node("Write Stmt");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.endl)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.endl)
             {
                 writeStmt.Children.Add(match(Token_Class.endl));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.String)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.String)
             {
                 writeStmt.Children.Add(Expression());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Number)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Number)
             {
                 writeStmt.Children.Add(Expression());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier)
             {
                 writeStmt.Children.Add(Expression());
             }
@@ -486,9 +486,9 @@ namespace JASON_Compiler
             {
                 //Error List
                 Errors.Error_List.Add("Parsing Error: Expected Write Stmt and " +
-                      TokenStream[InputPointer].token_type.ToString() +
+                      TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return writeStmt;
@@ -528,19 +528,19 @@ namespace JASON_Compiler
         Node ConditionalOperator()
         {
             Node conditionalOperator = new Node("Conditional Operator");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.GreaterThanOp)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.GreaterThanOp)
             {
                 conditionalOperator.Children.Add(match(Token_Class.GreaterThanOp));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.LessThanOp)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.LessThanOp)
             {
                 conditionalOperator.Children.Add(match(Token_Class.LessThanOp));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.EqualOp)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.EqualOp)
             {
                 conditionalOperator.Children.Add(match(Token_Class.EqualOp));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.NotEqualOp)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.NotEqualOp)
             {
                 conditionalOperator.Children.Add(match(Token_Class.NotEqualOp));
             }
@@ -548,9 +548,9 @@ namespace JASON_Compiler
             {
                 // ErrorList
                 Errors.Error_List.Add("Parsing Error: Expected Conditional Operator and " +
-                      TokenStream[InputPointer].token_type.ToString() +
+                      TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return conditionalOperator;
@@ -569,7 +569,7 @@ namespace JASON_Compiler
         Node BooleanStatments()
         {
             Node booleanStatments = new Node("Boolean Statments");
-            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Or || TokenStream[InputPointer].token_type == Token_Class.And))
+            if (InputPointer < TokenStreaminParser.Count && (TokenStreaminParser[InputPointer].token_type == Token_Class.Or || TokenStreaminParser[InputPointer].token_type == Token_Class.And))
             {
                 booleanStatments.Children.Add(BooleanOperator());
                 booleanStatments.Children.Add(Condition());
@@ -585,11 +585,11 @@ namespace JASON_Compiler
         Node BooleanOperator()
         {
             Node booleanOperator = new Node("Boolean Operator");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Or)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Or)
             {
                 booleanOperator.Children.Add(match(Token_Class.Or));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.And)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.And)
             {
                 booleanOperator.Children.Add(match(Token_Class.And));
             }
@@ -597,9 +597,9 @@ namespace JASON_Compiler
             {
                 // ErrorList
                 Errors.Error_List.Add("Parsing Error: Expected Boolean Operator and " +
-                      TokenStream[InputPointer].token_type.ToString() +
+                      TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return booleanOperator;
@@ -609,32 +609,39 @@ namespace JASON_Compiler
         Node Statement()
         {
             Node statement = new Node("Statement");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Write)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Write)
             {
                 statement.Children.Add(WriteStatement());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Read)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Read)
             {
                 statement.Children.Add(ReadStatement());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Idenifier)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier)
             {
-                if (InputPointer + 1 < TokenStream.Count && TokenStream[InputPointer + 1].token_type == Token_Class.Assignment)
+                if (InputPointer + 1 < TokenStreaminParser.Count && TokenStreaminParser[InputPointer + 1].token_type == Token_Class.Assignment)
                 {
                     statement.Children.Add(AssignmentStatment());
                     statement.Children.Add(match(Token_Class.Semicolon));
                 }
-
+                else
+                {
+                    Errors.Error_List.Add("Parsing Error: Expected assignment operator and " +
+                      TokenStreaminParser[InputPointer + 1].token_type.ToString() +
+                      "  found\r\n");
+                    InputPointer++;
+                    return null;
+                }
             }
-            else if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Float_Datatype|| TokenStream[InputPointer].token_type == Token_Class.String_Datatype || TokenStream[InputPointer].token_type == Token_Class.Int_Datatype))
+            else if (InputPointer < TokenStreaminParser.Count && (TokenStreaminParser[InputPointer].token_type == Token_Class.Float_Datatype|| TokenStreaminParser[InputPointer].token_type == Token_Class.String_Datatype || TokenStreaminParser[InputPointer].token_type == Token_Class.Int_Datatype))
             {
                 statement.Children.Add(DeclarationStatement());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.repeat)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.repeat)
             {
                 statement.Children.Add(RepeatStatment());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.If)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.If)
             {
                 statement.Children.Add(IFStatement());
             }
@@ -657,7 +664,7 @@ namespace JASON_Compiler
         Node State ()
         {
             Node states = new Node("State");
-            if(InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Write || TokenStream[InputPointer].token_type == Token_Class.Read || TokenStream[InputPointer].token_type == Token_Class.Idenifier || TokenStream[InputPointer].token_type == Token_Class.Int_Datatype || TokenStream[InputPointer].token_type == Token_Class.String_Datatype || TokenStream[InputPointer].token_type == Token_Class.Float_Datatype || TokenStream[InputPointer].token_type == Token_Class.repeat || TokenStream[InputPointer].token_type == Token_Class.If))
+            if(InputPointer < TokenStreaminParser.Count && (TokenStreaminParser[InputPointer].token_type == Token_Class.Write || TokenStreaminParser[InputPointer].token_type == Token_Class.Read || TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier || TokenStreaminParser[InputPointer].token_type == Token_Class.Int_Datatype || TokenStreaminParser[InputPointer].token_type == Token_Class.String_Datatype || TokenStreaminParser[InputPointer].token_type == Token_Class.Float_Datatype || TokenStreaminParser[InputPointer].token_type == Token_Class.repeat || TokenStreaminParser[InputPointer].token_type == Token_Class.If))
             {
                 states.Children.Add(Statement());
                 states.Children.Add(State());
@@ -685,25 +692,25 @@ namespace JASON_Compiler
         Node IFStmtList()
         {
             Node iFStmtList = new Node("IF Stmt List");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Elseif)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Elseif)
             {
                 iFStmtList.Children.Add(ElseIfStatement());
                 iFStmtList.Children.Add(ElseIfStmtList());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Else)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Else)
             {
                 iFStmtList.Children.Add(ElseStatement());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.End)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.End)
             {
                 iFStmtList.Children.Add(match(Token_Class.End));
             }
             else
             {
                 Errors.Error_List.Add("Parsing Error: Expected end or else statement or else if statement and " +
-                      TokenStream[InputPointer].token_type.ToString() +
+                      TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return iFStmtList;
@@ -712,7 +719,7 @@ namespace JASON_Compiler
         Node ElseIfStmtList()
         {
             Node elseIfStmtList = new Node("Else If Stmt List");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Elseif)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Elseif)
             {
                 elseIfStmtList.Children.Add(ElseIfStatement());
                 elseIfStmtList.Children.Add(ElseIfStmtList());
@@ -738,24 +745,24 @@ namespace JASON_Compiler
         Node ElseIfFollowingList()
         {
             Node elseIfFollowingList = new Node("Else If Following List");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.End)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.End)
             {
                 elseIfFollowingList.Children.Add(match(Token_Class.End));
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Else)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Else)
             {
                 elseIfFollowingList.Children.Add(ElseStatement());
             }
-            else if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Elseif)
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Elseif)
             {
                 elseIfFollowingList.Children.Add(ElseIfStmtList());
             }
             else
             {
                 Errors.Error_List.Add("Parsing Error: Expected end or else statement and " +
-                      TokenStream[InputPointer].token_type.ToString() +
+                      TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
             return elseIfFollowingList;
@@ -810,7 +817,7 @@ namespace JASON_Compiler
         Node Paramlist()
         {
             Node paramlist = new Node("Param list");
-            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Float_Datatype|| TokenStream[InputPointer].token_type == Token_Class.Int_Datatype|| TokenStream[InputPointer].token_type == Token_Class.String_Datatype))
+            if (InputPointer < TokenStreaminParser.Count && (TokenStreaminParser[InputPointer].token_type == Token_Class.Float_Datatype|| TokenStreaminParser[InputPointer].token_type == Token_Class.Int_Datatype|| TokenStreaminParser[InputPointer].token_type == Token_Class.String_Datatype))
             {
                 paramlist.Children.Add(Parameter());
                 paramlist.Children.Add(Parameters());
@@ -826,7 +833,7 @@ namespace JASON_Compiler
         Node Parameters()
         {
             Node parameters = new Node("Parameters");
-            if (InputPointer < TokenStream.Count && TokenStream[InputPointer].token_type == Token_Class.Comma)
+            if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Comma)
             {
                 parameters.Children.Add(match(Token_Class.Comma));
                 parameters.Children.Add(Parameter());
@@ -872,9 +879,9 @@ namespace JASON_Compiler
         Node Funcstat()
         {
             Node funcstat = new Node("Func stat");
-            if (InputPointer < TokenStream.Count && (TokenStream[InputPointer].token_type == Token_Class.Float_Datatype|| TokenStream[InputPointer].token_type == Token_Class.Int_Datatype|| TokenStream[InputPointer].token_type == Token_Class.String_Datatype))
+            if (InputPointer < TokenStreaminParser.Count && (TokenStreaminParser[InputPointer].token_type == Token_Class.Float_Datatype|| TokenStreaminParser[InputPointer].token_type == Token_Class.Int_Datatype|| TokenStreaminParser[InputPointer].token_type == Token_Class.String_Datatype))
             {
-                if (InputPointer+1 < TokenStream.Count && TokenStream[InputPointer+1].token_type == Token_Class.Main)
+                if (InputPointer+1 < TokenStreaminParser.Count && TokenStreaminParser[InputPointer+1].token_type == Token_Class.Main)
                 {
                     return null;
                 }
@@ -893,9 +900,9 @@ namespace JASON_Compiler
         public Node match(Token_Class ExpectedToken)
         {
 
-            if (InputPointer < TokenStream.Count)
+            if (InputPointer < TokenStreaminParser.Count)
             {
-                if (ExpectedToken == TokenStream[InputPointer].token_type)
+                if (ExpectedToken == TokenStreaminParser[InputPointer].token_type)
                 {
                     InputPointer++;
                     Node newNode = new Node(ExpectedToken.ToString());
@@ -906,9 +913,9 @@ namespace JASON_Compiler
                 {
                     Errors.Error_List.Add("Parsing Error: Expected "
                         + ExpectedToken.ToString() + " and " +
-                        TokenStream[InputPointer].token_type.ToString() +
+                        TokenStreaminParser[InputPointer].token_type.ToString() +
                         "  found\r\n");
-                    InputPointer++;
+                    //InputPointer++;
                     return null;
                 }
             }
@@ -916,7 +923,7 @@ namespace JASON_Compiler
             {
                 Errors.Error_List.Add("Parsing Error: Expected "
                         + ExpectedToken.ToString() + "\r\n");
-                InputPointer++;
+                //InputPointer++;
                 return null;
             }
         }
