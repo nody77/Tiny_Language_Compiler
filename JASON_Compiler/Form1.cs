@@ -51,6 +51,8 @@ namespace JASON_Compiler
             textBox1.Text = "";
             textBox2.Text = "";
             JASON_Compiler.TokenStream.Clear();
+            JASON_Compiler.Jason_Scanner.Tokens.Clear();
+            JASON_Compiler.treeroot.Children.Clear();
             dataGridView1.Rows.Clear();
             treeView1.Nodes.Clear();
             Errors.Error_List.Clear();

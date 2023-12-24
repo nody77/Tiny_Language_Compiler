@@ -237,24 +237,27 @@ namespace JASON_Compiler
                     if (CurrentChar == '-')
                     {
                         j++;
-                        if (j < SourceCode.Length)
+                        if (j < SourceCode.Length )
                         {
                             string CurrentLexeme = CurrentChar.ToString();
                             CurrentChar = SourceCode[j];
-                            while (CurrentChar >= '0' && CurrentChar <= '9' || CurrentChar == '.')
+                            if (SourceCode[i - 1] <= '0' || SourceCode[i - 1] >= '9')
                             {
-
-                                CurrentLexeme += CurrentChar;
-                                j += 1;
-                                if (j < SourceCode.Length)
+                                while (CurrentChar >= '0' && CurrentChar <= '9' || CurrentChar == '.')
                                 {
-                                    CurrentChar = SourceCode[j];
-                                }
-                                else
-                                {
-                                    break;
-                                }
 
+                                    CurrentLexeme += CurrentChar;
+                                    j += 1;
+                                    if (j < SourceCode.Length)
+                                    {
+                                        CurrentChar = SourceCode[j];
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+
+                                }
                             }
                             FindTokenClass(CurrentLexeme);
                             i = j - 1;

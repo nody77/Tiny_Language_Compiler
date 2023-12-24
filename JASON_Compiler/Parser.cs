@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -74,13 +75,18 @@ namespace JASON_Compiler
             return functionCall;
         }
 
-        //Idlist ->  identifier idenlist | ε
+        //Idlist ->  identifier idenlist | number idenlist |ε
         Node Idlist()
         {
             Node idlist = new Node("Idlist");
             if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier)
             {
                 idlist.Children.Add(match(Token_Class.Idenifier));
+                idlist.Children.Add(Idenlist());
+            }
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Number)
+            {
+                idlist.Children.Add(match(Token_Class.Number));
                 idlist.Children.Add(Idenlist());
             }
             else
@@ -90,14 +96,14 @@ namespace JASON_Compiler
             return idlist;
         }
 
-        //Idenlist -> , identifier idenlist | ε
+        //Idenlist -> , Ide idenlist | ε
         Node Idenlist()
         {
             Node idenlist = new Node("Idenlist");
             if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Comma)
             {
                 idenlist.Children.Add(match(Token_Class.Comma));
-                idenlist.Children.Add(match(Token_Class.Idenifier));
+                idenlist.Children.Add(Ide());
                 idenlist.Children.Add(Idenlist());
             }
             else
@@ -106,7 +112,28 @@ namespace JASON_Compiler
             }
             return idenlist;
         }
-
+        //Ide -> identifier | number
+        Node Ide()
+        {
+            Node ide = new Node("Ide");
+            if(InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Number)
+            {
+                ide.Children.Add(match(Token_Class.Number));
+            }
+            else if (InputPointer < TokenStreaminParser.Count && TokenStreaminParser[InputPointer].token_type == Token_Class.Idenifier)
+            {
+                ide.Children.Add(match(Token_Class.Idenifier));
+            }
+            else
+            {
+                Errors.Error_List.Add("Parsing Error: Expected identifier or number and " +
+                       TokenStreaminParser[InputPointer].token_type.ToString() +
+                       "  found\r\n");
+                InputPointer++;
+                return null;
+            }
+            return ide; 
+        }
         //2)Term -> Number | Identifier | FunctionCall 
         Node Term()
         {
@@ -133,7 +160,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected Term and " +
                        TokenStreaminParser[InputPointer].token_type.ToString() +
                        "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return term;
@@ -163,7 +190,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected Equation and " +
                       TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return equation;
@@ -202,7 +229,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected Equation and " +
                      TokenStreaminParser[InputPointer].token_type.ToString() +
                      "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return eq;
@@ -248,7 +275,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected EqList and " +
                      TokenStreaminParser[InputPointer].token_type.ToString() +
                      "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return eqList;
@@ -279,7 +306,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected Arithmatic Operator and " +
                      TokenStreaminParser[InputPointer].token_type.ToString() +
                      "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return arithmaticOperator;
@@ -326,7 +353,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected Term and " +
                       TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return expression;
@@ -374,7 +401,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected Dec list and " +
                       TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return declist;
@@ -418,7 +445,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected Ass List and " +
                       TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return assList;
@@ -446,7 +473,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected Datatype and " +
                       TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return datatype;
@@ -488,7 +515,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected Write Stmt and " +
                       TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return writeStmt;
@@ -550,7 +577,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected Conditional Operator and " +
                       TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return conditionalOperator;
@@ -599,7 +626,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected Boolean Operator and " +
                       TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return booleanOperator;
@@ -710,7 +737,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected end or else statement or else if statement and " +
                       TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return iFStmtList;
@@ -762,7 +789,7 @@ namespace JASON_Compiler
                 Errors.Error_List.Add("Parsing Error: Expected end or else statement and " +
                       TokenStreaminParser[InputPointer].token_type.ToString() +
                       "  found\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
             return elseIfFollowingList;
@@ -915,7 +942,7 @@ namespace JASON_Compiler
                         + ExpectedToken.ToString() + " and " +
                         TokenStreaminParser[InputPointer].token_type.ToString() +
                         "  found\r\n");
-                    //InputPointer++;
+                    InputPointer++;
                     return null;
                 }
             }
@@ -923,7 +950,7 @@ namespace JASON_Compiler
             {
                 Errors.Error_List.Add("Parsing Error: Expected "
                         + ExpectedToken.ToString() + "\r\n");
-                //InputPointer++;
+                InputPointer++;
                 return null;
             }
         }
