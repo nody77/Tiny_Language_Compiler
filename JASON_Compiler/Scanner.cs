@@ -353,7 +353,7 @@ namespace JASON_Compiler
                         {
                             CurrentLexeme += CurrentChar;
                             FindTokenClass(CurrentLexeme);
-                            i = j + 1;
+                            i = j;
                         }
                     }
                     else
